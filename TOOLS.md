@@ -100,7 +100,7 @@
 |---|---|---|---|
 | `query` | string |  | 問題或關鍵字，例：「信用卡 年費 境外 沒有發票」「發票 折讓 已申報」「零用金 撥補」 |
 | `section` | string |  | 指定段落的 id 或標題（目錄用 toc: true 取得） |
-| `toc` | boolean |  | true＝回全部段落目錄（預設有找到段落就不回） |
+| `toc` | boolean |  | true＝回全部段落目錄；可以單獨帶（不帶 query、section），只回目錄；帶了 query 找到段落時預設不回目錄 |
 
 ## calc_annual_leave
 
@@ -117,7 +117,7 @@
 | `monthly_wage` | integer |  | 月薪（算一日工資＝月薪÷30） |
 | `hourly_wage` | integer |  | 時薪（一日工資＝時薪×每日正常工時） |
 | `daily_normal_hours` | integer |  | 時薪制每日正常工時（預設 8） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_business_income_tax
 
@@ -129,7 +129,7 @@
 |---|---|---|---|
 | `taxable_income` | integer | 是 | 全年課稅所得額（元） |
 | `date` | string |  | 有效日 YYYY-MM-DD，預設今天（台北） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_depreciation_tax_book_difference
 
@@ -144,10 +144,10 @@
 | `tax_salvage` | integer |  | 稅法預估殘值 |
 | `book_life_years` | integer | 是 | 最小 1 |
 | `tax_life_years` | integer | 是 | 最小 1 |
-| `method` | string |  | 目前只有平均法；可選值：straight_line |
+| `method` | string |  | 目前只有平均法；可選值：`straight_line` |
 | `acquired_on` | string | 是 | 取得日 YYYY-MM-DD（取得月份整月計） |
 | `date` | string |  | 有效日 YYYY-MM-DD，預設今天（台北） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_donation_limit
 
@@ -164,11 +164,11 @@
 | `donation_unlimited` | integer |  | 不受金額限制的捐贈 |
 | `donation_capped` | integer |  | 受限額限制的捐贈 |
 | `date` | string |  | 有效日 YYYY-MM-DD，預設今天（台北） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_entertainment_expense_limit
 
-試算交際費限額（進貨、銷貨、運費、勞務或信用業收入分級累進，加外銷特別交際費），一般申報與藍色申報書（含會計師簽證）比例不同。不適用：保險業、放映電影業；只是估算，不代替申報。另回 rules、source_refs、unsupported 三個固定欄位。
+試算交際費限額（進貨、銷貨、運費、勞務或信用業收入分級累進，加外銷特別交際費），一般申報與藍色申報書（含會計師簽證）比例不同。不適用：保險業、放映電影業；只是估算，不代替申報。至少要帶一項進貨、銷貨、運費、勞務收入或外銷金額，什麼都沒帶回 invalid_params。另回 rules、source_refs、unsupported 三個固定欄位。
 
 **輸入**
 
@@ -182,11 +182,11 @@
 | `export_income` | integer |  | 外銷收入 |
 | `actual_expense` | integer |  | 實際交際費（選填，帶了才算允許列支與超限） |
 | `date` | string |  | 有效日 YYYY-MM-DD，預設今天（台北） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_labor_health_insurance
 
-算勞保、就保、職災、墊償基金、健保、勞退的金額（勞工自付、雇主負擔）。薪資題先呼叫 payroll_guide 再用這支。照 115 年勞保局分擔金額表（勞保、就保各自算到元再相加，按投保日數）、健保署負擔金額表（眷屬最多 3 人、雇主按平均眷口數 0.56）、勞退月提繳分級表；部分工時有較低級距。到職、離職當月帶 start_date 或 end_date 按日計（每月 30 日；勞保、就保、職災、墊償基金退保算到退保是日，勞退月末日離職算整月 30 日，兩者在月底離職時日數可能不同；健保按月）。另回 rules、source_refs、unsupported 三個固定欄位。
+算勞保、就保、職災、墊償基金、健保、勞退的金額（勞工自付、雇主負擔）。薪資題先呼叫 payroll_guide 再用這支。照 115 年勞保局分擔金額表（勞保、就保各自算到元再相加，按投保日數）、健保署負擔金額表（眷屬最多 3 人、雇主按平均眷口數 0.56）、勞退月提繳分級表；部分工時有較低級距。到職、離職當月帶 start_date 或 end_date 按日計（每月 30 日；勞保、就保、職災、墊償基金退保算到退保是日，勞退月末日離職算整月 30 日，兩者在月底離職時日數可能不同；健保按月）。至少要帶 monthly_wage，或直接帶投保金額（labor_insured_salary、nhi_insured_amount、pension_wage 等），什麼都沒帶回 invalid_params。另回 rules、source_refs、unsupported 三個固定欄位。
 
 **輸入**
 
@@ -205,7 +205,7 @@
 | `industry_code` | integer |  | 職災保險行業類別編號（1 到 55，勞動部公告表的編號；用 lookup_code kind=occupational_industry_rate 查）；帶了就用表列費率算職災保險費，date 在 2025-01-01 之前回 not_found |
 | `voluntary_pension_rate` | number |  | 勞工自願提繳率（0 到 0.06） |
 | `date` | string |  | YYYY-MM-DD；用哪一天有效的表；沒帶用 start_date、end_date 或今天 |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_overtime_pay
 
@@ -215,15 +215,15 @@
 
 | 欄位 | 型別 | 必填 | 說明 |
 |---|---|---|---|
-| `pay_type` | string | 是 | 計薪方式：時薪、日薪、月薪；可選值：hourly、daily、monthly |
+| `pay_type` | string | 是 | 計薪方式：時薪、日薪、月薪；可選值：`hourly`、`daily`、`monthly` |
 | `wage` | integer | 是 | 時薪、日薪或月薪（元） |
 | `monthly_regular_allowances` | integer |  | 月薪制：每月固定發的經常性給與（伙食津貼、全勤獎金、職務加給等）合計，會加進月薪算每小時工資額 |
 | `daily_normal_hours` | integer |  | 日薪制：約定每日正常工時（預設 8） |
-| `day_type` | string | 是 | 那一天：平日、休息日、國定假日或特休日、例假（因天災、事變、突發事件出勤）；可選值：weekday、rest_day、holiday、regular_day_off_disaster |
+| `day_type` | string | 是 | 那一天：平日、休息日、國定假日或特休日、例假（因天災、事變、突發事件出勤）；可選值：`weekday`、`rest_day`、`holiday`、`regular_day_off_disaster` |
 | `hours_worked` | number | 是 | 那一天實際工作時數（不含休息；可用小數，例 9.5） |
 | `disaster` | boolean |  | 平日或休息日是不是因天災、事變、突發事件延長工時 |
 | `date` | string |  | YYYY-MM-DD；用哪一天有效的最低工資；沒帶用今天 |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_personal_income_tax
 
@@ -237,7 +237,7 @@
 | `members` | 陣列（object） | 是 | 申報戶每個人一筆；本人一定要有 |
 | `household` | object |  |  |
 | `method` | string |  | 只看某一種計稅方式（選填，名稱照 options 的 method） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_severance
 
@@ -263,7 +263,7 @@
 | `notice_days_given` | integer |  | 已經預告的日數 |
 | `monthly_wage_for_notice` | integer |  | 算預告工資用的月薪（一日工資＝月薪÷30；平均工資每日較高的以平均工資計，勞動部 109.10.29 令釋） |
 | `date` | string |  | YYYY-MM-DD；用哪一天有效的規則 |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_vat_payable
 
@@ -279,7 +279,7 @@
 | `non_deductible_input_tax` | integer |  | 其中不得扣抵的進項稅額（營業稅法第 19 條） |
 | `prior_credit` | integer |  | 上期累積留抵稅額 |
 | `date` | string |  | 有效日 YYYY-MM-DD，預設今天（台北） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## calc_withholding_and_nhi_supplement
 
@@ -291,16 +291,16 @@
 |---|---|---|---|
 | `income_type_code` | string | 是 | 所得類別代號（例 9A、51、50；lookup_code 的 income_type） |
 | `amount` | integer | 是 | 給付額（元） |
-| `residency` | string | 是 | 可選值：resident、nonresident |
+| `residency` | string | 是 | 可選值：`resident`、`nonresident` |
 | `nhi_insured` | boolean | 是 | 受領人是不是健保的保險對象（不是就不扣補充保費）；不確定就先問使用者 |
 | `paid_by_insured_unit` | boolean |  | 是不是受領人所屬的投保單位給付；居住者薪資（代號 50）必填，其他預設否 |
-| `salary_kind` | string |  | 薪資類：bonus 獎金、other 其他。居住者薪資（代號 50）必填：所屬投保單位給付的 other 是每月薪資（要帶 salary_method），不是所屬投保單位給付的 other 當兼職；獎金與兼職按每次給付 5%，不帶 salary_method、dependents；可選值：bonus、other |
-| `salary_method` | string |  | 居住者每月薪資：table 查薪資扣繳稅額表（已填免稅額申報表）、flat 按全月給付總額 5%（沒填）；可選值：table、flat |
+| `salary_kind` | string |  | 薪資類：bonus 獎金、other 其他。居住者薪資（代號 50）必填：所屬投保單位給付的 other 是每月薪資（要帶 salary_method），不是所屬投保單位給付的 other 當兼職；獎金與兼職按每次給付 5%，不帶 salary_method、dependents；可選值：`bonus`、`other` |
+| `salary_method` | string |  | 居住者每月薪資：table 查薪資扣繳稅額表（已填免稅額申報表）、flat 按全月給付總額 5%（沒填）；可選值：`table`、`flat` |
 | `dependents` | integer |  | 查表用：配偶及受扶養親屬人數（配偶算 1，本人不算） |
 | `insured_amount` | integer |  | 投保金額（所屬投保單位給付獎金時要） |
 | `bonus_cumulative_before` | integer |  | 今年已給付的獎金累計，不含這一次（所屬投保單位給付獎金時要） |
 | `date` | string |  | 有效日 YYYY-MM-DD，預設今天（台北） |
-| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：full |
+| `detail` | string |  | full＝params_used 每個參數附完整出處與法源（預設精簡，出處看 source_refs）；可選值：`full` |
 
 ## filing_calendar
 
@@ -311,8 +311,8 @@
 | 欄位 | 型別 | 必填 | 說明 |
 |---|---|---|---|
 | `year` | integer | 是 | 西元年，例 2026 |
-| `entity_type` | string |  | 組織型態：company、sole_proprietorship、partnership、association、government_agency、individual；沒帶就全部 |
-| `detail` | string |  | full＝回完整欄位（出處、查證日等）；預設精簡；可選值：full |
+| `entity_type` | string |  | 組織型態：company、sole_proprietorship、partnership、association、government_agency、individual；沒帶就全部；可選值：`association`、`company`、`government_agency`、`individual`、`partnership`、`sole_proprietorship` |
+| `detail` | string |  | full＝回完整欄位（出處、查證日等）；預設精簡；可選值：`full` |
 | `month` | integer |  | 只看這一年的這個月：以 due_date 的年月篩；原期限在這個月、順延到下個月的也列出，summary 開頭寫「原期限在本月，順延至 X 月 X 日」；最小 1；最大 12 |
 
 ## foreign_per_diem
@@ -365,7 +365,7 @@
 | 欄位 | 型別 | 必填 | 說明 |
 |---|---|---|---|
 | `category` | string |  | 類別（例 所得稅、營業稅） |
-| `detail` | string |  | full＝回完整欄位（出處、查證日等）；預設精簡；可選值：full |
+| `detail` | string |  | full＝回完整欄位（出處、查證日等）；預設精簡；可選值：`full` |
 
 ## list_tax_parameters
 
@@ -376,7 +376,7 @@
 | 欄位 | 型別 | 必填 | 說明 |
 |---|---|---|---|
 | `query` | string |  | 比對名稱與 id，至少 2 個字 |
-| `detail` | string |  | full＝回完整欄位（出處、查證日等）；預設精簡；可選值：full |
+| `detail` | string |  | full＝回完整欄位（出處、查證日等）；預設精簡；可選值：`full` |
 
 ## lookup_code
 
@@ -386,7 +386,7 @@
 
 | 欄位 | 型別 | 必填 | 說明 |
 |---|---|---|---|
-| `kind` | string | 是 | 代碼種類 |
+| `kind` | string | 是 | 代碼種類；可選值：`account_item`、`fixed_asset_life`、`foreign_per_diem`、`house_tax_county_rate`、`income_type`、`invoice_format`、`invoice_timing`、`labor_insurance_grade`、`labor_pension_grade`、`lvit_cpi`、`nhi_insured_grade`、`occupational_industry_rate`、`occupational_insurance_grade`、`salary_withholding_table`、`tax_category`、`vat_deduction_code`、`vat_special_rate_code` |
 | `code` | string |  | 代碼；不帶 code 與 name 就列出這一種的全部（超過 100 筆的種類不列） |
 | `name` | string |  | 名稱或其中幾個字；不帶 code 與 name 就列出這一種的全部（超過 100 筆的種類不列） |
 | `date` | string |  | YYYY-MM-DD；帶了只回那一天適用的（例：會計項目表兩版）；沒帶就各期都列 |
@@ -401,7 +401,7 @@
 |---|---|---|---|
 | `query` | string |  | 問題或關鍵字，例：「工讀生 休息日 加班 9 小時」「颱風假 全勤」「資遣費 年資 平均工資」 |
 | `section` | string |  | 指定段落的 id 或標題（目錄用 toc: true 取得） |
-| `toc` | boolean |  | true＝回全部段落目錄（預設有找到段落就不回） |
+| `toc` | boolean |  | true＝回全部段落目錄；可以單獨帶（不帶 query、section），只回目錄；帶了 query 找到段落時預設不回目錄 |
 
 ## personal_tax_guide
 
@@ -413,7 +413,7 @@
 |---|---|---|---|
 | `query` | string |  | 問題或關鍵字，例：「夫妻 薪資分開 計稅」「股利 28% 8.5%」「房租 扣除 排富」「基本生活費」 |
 | `section` | string |  | 指定段落的 id 或標題（目錄用 toc: true 取得） |
-| `toc` | boolean |  | true＝回全部段落目錄（預設有找到段落就不回） |
+| `toc` | boolean |  | true＝回全部段落目錄；可以單獨帶（不帶 query、section），只回目錄；帶了 query 找到段落時預設不回目錄 |
 
 ## property_tax_guide
 
@@ -425,7 +425,7 @@
 |---|---|---|---|
 | `query` | string |  | 問題或關鍵字，例：「房地合一 持有 3 年 稅率」「土地增值稅 自用住宅 一生一屋」「房屋稅 新北市 3 戶」「遺產稅 扣除額 未成年」 |
 | `section` | string |  | 指定段落的 id 或標題（目錄用 toc: true 取得） |
-| `toc` | boolean |  | true＝回全部段落目錄（預設有找到段落就不回） |
+| `toc` | boolean |  | true＝回全部段落目錄；可以單獨帶（不帶 query、section），只回目錄；帶了 query 找到段落時預設不回目錄 |
 
 ## search_law
 
@@ -448,4 +448,4 @@
 
 | 欄位 | 型別 | 必填 | 說明 |
 |---|---|---|---|
-| `topic` | string | 是 | 主題或問題類型 |
+| `topic` | string | 是 | 主題或問題類型；可選值：`憑證與傳票用詞`、`憑證與帳簿保存年限`、`原始憑證遺失或無法取得`、`帳錯更正`、`開立統一發票的種類`、`發票開立時點`、`發票記載錯誤`、`發票作廢、退回與折讓`、`空白發票未使用`、`進項稅額能不能扣抵`、`進項憑證延後扣抵`、`視為銷售、無償移轉`、`營業稅零稅率`、`營業稅申報期間`、`營業稅溢付留抵與退還`、`總分支機構營業稅申報`、`代付款與發票抬頭`、`總分支機構所得稅與帳目`、`營利事業所得稅申報書帳載與調整`、`交際費`、`職工福利`、`捐贈`、`旅費與國外出差`、`薪資與家屬薪資`、`呆帳`、`折舊與耐用年數`、`小額資產費用化`、`兌換損益`、`暫繳`、`營所稅結算申報`、`未分配盈餘加徵`、`設算利息與股東借支`、`轉投資股利`、`關係人交易與移轉訂價`、`共同費用分攤`、`未取得或未給與憑證的處罰`、`扣繳`、`非居住者與境外付款`、`所得類別`、`補充保費`、`租金給個人`、`勞工退休金提繳`、`資金貸與`、`公司保證與背書`、`控制與從屬公司、關係企業`、`基本稅額（最低稅負）`、`印花稅`、`個人資料處理`、`開公司流程`、`開商號流程（獨資、合夥）`、`綜所稅計算`、`綜所稅扣除額`、`股利課稅（個人）`、`夫妻計稅方式`、`基本生活費差額`、`綜所稅申報與退補`、`房地合一`、`土地增值稅`、`地價稅`、`房屋稅`、`契稅`、`遺產稅`、`贈與稅`、`預售屋轉售與紅單` |
